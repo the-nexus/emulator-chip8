@@ -1,17 +1,20 @@
 
 #pragma once
 
-#include "interpreter/components/CPU.hpp"
-#include "interpreter/components/GPU.hpp"
-#include "interpreter/components/RAM.hpp"
+#include "interpreter/components/Display.hpp"
+#include "interpreter/components/Instruction.hpp"
+#include "interpreter/components/Memory.hpp"
+#include "interpreter/components/Processor.hpp"
+#include "interpreter/utils/Memory.hpp"
 
 namespace interpreter
 {
     class Interpreter
     {
-        CPU _cpu;
-        GPU _gpu = { std::make_pair(64, 32) };  // 64x32
-        RAM _ram = { 4 * 1024 };                // 4kB
+        components::Processor _processor = {};
+        components::Instruction _instruction = {};
+        components::Memory _memory = { utils::Memory::ToKilobytes(4) };
+        components::Display _display = { 64, 32 };
 
     public:
         Interpreter();

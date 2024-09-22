@@ -3,6 +3,8 @@
 
 #include <algorithm>
 
+#include "interpreter/systems/FontLoader.hpp"
+
 using namespace interpreter;
 
 Interpreter::Interpreter()
@@ -12,14 +14,21 @@ Interpreter::Interpreter()
 
 void Interpreter::Reset()
 {
-    _cpu.Reset();
-    _gpu.Reset();
-    _ram.Reset();
+    _processor.Reset();
+    _instruction = {};
+    _memory.Reset();
+    _display.Reset();
 
-    _cpu.InitializeMemory(_ram._memoryBuffer);
+    systems::FontLoader::LoadSprite(components::Processor::GetFontAddress(), _memory);
+    _processor._PC = components::Processor::GetProgramAddress();
 }
 
 void Interpreter::Step()
 {
-    _cpu.Step(_ram._memoryBuffer, _gpu._displayBuffer);
+    _instruction = {
+        _memory._buffer[_processor._PC++],
+        _memory._buffer[_processor._PC++]
+    };
+
+    
 }
