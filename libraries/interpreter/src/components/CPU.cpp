@@ -1,0 +1,52 @@
+
+#include "interpreter/components/CPU.hpp"
+
+using namespace interpreter;
+
+
+CPU::InstructionData::InstructionData(uint16_t const value)
+    : _value(value)
+    , _NNN(value & 0x0FFF)
+    , _KK(static_cast<uint8_t>(value & 0x00FF))
+    , _R(static_cast<uint8_t>((value & 0x000F)))
+    , _X(static_cast<uint8_t>((value & 0x00F0) >> 4))
+    , _Y(static_cast<uint8_t>((value & 0x0F00) >> 8))
+    , _L(static_cast<uint8_t>((value & 0xF000) >> 12))
+{}
+
+CPU::InstructionData::InstructionData(uint8_t const highByte, uint8_t const lowByte)
+    : InstructionData(static_cast<uint16_t>(highByte) << 8 | static_cast<uint16_t>(lowByte))
+{}
+
+void CPU::Reset()
+{
+    _instruction = { 0x0000 };
+}
+
+void CPU::Step(std::vector<uint8_t>& memoryBuffer, std::vector<uint8_t>& displayBuffer)
+{
+    _instruction = { memoryBuffer[_PC++], memoryBuffer[_PC++] };
+}
+
+void CPU::InitializeMemory(std::vector<uint8_t>& memoryBuffer) const
+{
+    static std::array<uint8_t, 5 * 16> constexpr fontBuffer =
+    {
+        0xF0, 0x90, 0x90, 0x90, 0xF0,   // 0
+        0x20, 0x60, 0x20, 0x20, 0x70,   // 1
+        0xF0, 0x10, 0xF0, 0x80, 0xF0,   // 2
+        0xF0, 0x10, 0xF0, 0x10, 0xF0,   // 3
+        0x90, 0x90, 0xF0, 0x10, 0x10,   // 4
+        0xF0, 0x80, 0xF0, 0x10, 0xF0,   // 5
+        0xF0, 0x80, 0xF0, 0x90, 0xF0,   // 6
+        0xF0, 0x10, 0x20, 0x40, 0x40,   // 7
+        0xF0, 0x90, 0xF0, 0x90, 0xF0,   // 8
+        0xF0, 0x90, 0xF0, 0x10, 0xF0,   // 9
+        0xF0, 0x90, 0xF0, 0x90, 0x90,   // A
+        0xE0, 0x90, 0xE0, 0x90, 0xE0,   // B
+        0xF0, 0x80, 0x80, 0x80, 0xF0,   // C
+        0xE0, 0x90, 0x90, 0x90, 0xE0,   // D
+        0xF0, 0x80, 0xF0, 0x80, 0xF0,   // E
+        0xF0, 0x80, 0xF0, 0x80, 0x80    // F
+    };
+}
